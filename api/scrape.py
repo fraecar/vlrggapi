@@ -1,5 +1,5 @@
 import re
-
+import json
 import requests
 from datetime import timezone
 from datetime import datetime
@@ -29,7 +29,7 @@ class Vlr:
         keys "status" and "segments".
         """
         url = "https://www.vlr.gg/news"
-        html, status = self.get_parse(url)
+        html, status = self.get_parse(self, url)
         result = []
         for item in html.css("a.wf-module-item"):
             # This is getting the date and author of the article.
@@ -62,13 +62,13 @@ class Vlr:
         data = {"data": {"status": status, "segments": result}}
 
         # This is checking if the status code is not 200, if it is not 200 then it will raise an exception.
-        if status != 200:
-            raise Exception("API response: {}".format(status))
-        return data
+    
+        with open("news.json", "w") as f:
+            json.dump(data, f)
 
     @staticmethod
     def vlr_rankings(region):
-        url = "https://www.vlr.gg/rankings/" + res.region[str(region)]
+        url = "https://www.vlr.gg/rankings/" + res.regionult[str(region)]
         resp = requests.get(url, headers=headers)
         html = HTMLParser(resp.text)
         status = resp.status_code
@@ -126,7 +126,9 @@ class Vlr:
 
         if status != 200:
             raise Exception("API response: {}".format(status))
-        return data
+        else:         
+            with open(f"./rankings_{region}.json", "w") as f:
+                json.dump(data, f)
 
     @staticmethod
     def vlr_score():
@@ -201,7 +203,9 @@ class Vlr:
 
         if status != 200:
             raise Exception("API response: {}".format(status))
-        return data
+        else:         
+            with open("./score.json", "w") as f:
+                json.dump(data, f)
 
     @staticmethod
     def vlr_stats(region: str, timespan: int):
@@ -263,7 +267,9 @@ class Vlr:
 
         if status != 200:
             raise Exception("API response: {}".format(status))
-        return data
+        else:         
+            with open(f"./stats/stats_{region}.json", "w") as f:
+                json.dump(data, f)
 
     @staticmethod
     def vlr_upcoming_matches():
@@ -319,10 +325,11 @@ class Vlr:
         segments = {"status": status, "segments": result}
 
         data = {"data": segments}
-
         if status != 200:
             raise Exception("API response: {}".format(status))
-        return data
+        else:         
+            with open("./upcoming_matches.json", "w") as f:
+                json.dump(data, f)
 
     @staticmethod
     def vlr_live_score():
@@ -405,7 +412,9 @@ class Vlr:
 
         if status != 200:
             raise Exception("API response: {}".format(status))
-        return data
+        else:         
+            with open("./live_score.json", "w") as f:
+                json.dump(data, f)
 
 
 if __name__ == "__main__":
